@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Preview of one-region Chrome Safe Browsing checks. Live scanning, verified signup and billing are not active yet.">
+  <meta name="description" content="Preview of one-region Chrome Safe Browsing checks. Live scanning and verified signup are not active; crypto checkout is a bash.10 pilot.">
   <title>gsb-api.lol · Google Safe Browsing detection</title>
   <link rel="stylesheet" href="/bootstrap.min.css">
   <link rel="stylesheet" href="/style.css?v=archive-base-2">
@@ -69,12 +69,14 @@
     </dl>
     <p class="note">The source archive reports these figures; capacity and delay have not been verified on this VPS. The listed rate is proposed and billing is not active.</p>
     <section class="docs border-top mt-4 pt-3" id="crypto" aria-labelledby="crypto-title">
-      <h2 id="crypto-title">Crypto checkout planned</h2>
-      <p class="mb-1">Target assets: <strong>BTC, ETH, USDT and USDC</strong>.</p>
-      <p class="note">DV.net and OpenPay merchant integrations are not configured yet. Accepted coins and networks will depend on merchant setup; no crypto is accepted on this preview.</p>
+      <h2 id="crypto-title">Crypto checkout</h2>
+      <p class="mb-1">Pilot payment: <strong>bash.10</strong> via OpenPay / DV.net. Available coins and networks are shown on the payment page.</p>
+      <p class="note">This is a payment-mechanics pilot on a preview site. Live scans, verified signup and API access are not active — payment does not unlock service yet.</p>
+      <button class="btn btn-outline-primary btn-sm" type="button" id="checkout-btn">Pay bash.10 with crypto</button>
+      <p class="note" id="checkout-status" role="status" aria-live="polite"></p>
     </section>
   </main>
-  <footer class="wrap site-footer"><span>Preview only · live scans, signup, billing and MCP are not active.</span><button class="vm-privacy" type="button" data-vm-preferences>Privacy choices</button></footer>
+  <footer class="wrap site-footer"><span>Preview only · live scans, signup and MCP are not active · bash.10 checkout pilot.</span><button class="vm-privacy" type="button" data-vm-preferences>Privacy choices</button></footer>
   <aside class="vm-consent" data-vm-consent hidden role="region" aria-labelledby="vm-consent-title" aria-describedby="vm-consent-copy">
     <div class="vm-consent-copy"><strong id="vm-consent-title">Analytics preferences</strong><p id="vm-consent-copy">Allow VibeMetrics to measure page views, referrer/UTM source and page engagement. It respects Do Not Track. Choose Accept or Decline; you can change this later.</p></div>
     <div class="vm-consent-actions"><button type="button" data-vm-decline>Decline</button><button type="button" data-vm-accept>Accept analytics</button></div>
