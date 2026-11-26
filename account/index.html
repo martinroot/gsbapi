@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account · gsb-api.lol</title>
+  <link rel="stylesheet" href="/style.css?v=archive-base-2">
+  <link rel="stylesheet" href="/consent.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="/">gsb-api.lol</a>
+      <nav aria-label="Main navigation">
+        <a href="#api">API docs</a>
+        <a href="/account/" aria-current="page">Account</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap account">
+    <h1>Account</h1>
+    <section id="access" aria-label="Account access">
+      <p id="access-status" role="status">Connecting to the API…</p>
+      <form id="sign-in" hidden>
+        <label for="api-key">API key</label>
+        <div class="field-row">
+          <input id="api-key" type="password" autocomplete="off" spellcheck="false" required>
+          <button type="submit">Sign in</button>
+        </div>
+      </form>
+      <button id="open-demo" type="button" hidden>Open demo account</button>
+    </section>
+
+    <section class="signup-note" id="signup" aria-labelledby="signup-title">
+      <h2 id="signup-title">Sign up</h2>
+      <p>Email verification is not connected yet, so a production account cannot be created. The current archive supports API-key sign-in and a browser-only demo.</p>
+      <p class="note">The demo shows 1,000 sample credits. They are not live API credits and no email or password is stored.</p>
+      <button id="signup-demo" type="button">Open demo account</button>
+      <p class="note" id="signup-status" role="status"></p>
+    </section>
+
+    <section id="dashboard" aria-label="Account dashboard" hidden>
+      <div class="account-row">
+        <p id="session-label">Signed in with your API key.</p>
+        <button id="sign-out" class="secondary" type="button">Sign out</button>
+      </div>
+      <dl class="metrics account-metrics">
+        <div><dt>Credits remaining</dt><dd id="credits">—</dd></div>
+        <div><dt>Checks billed</dt><dd id="billed">—</dd></div>
+        <div><dt>Per completed check</dt><dd>$0.0003</dd></div>
+      </dl>
+      <form id="check">
+        <label for="url">URL to check</label>
+        <div class="field-row">
+          <input id="url" type="url" placeholder="https://example.com/" maxlength="2048" spellcheck="false" required>
+          <button type="submit">Run check</button>
+        </div>
+        <div id="demo-options" hidden>
+          <label for="scenario">Demo result</label>
+          <select id="scenario">
+            <option value="no_warning_observed">No warning observed</option>
+            <option value="warning">Warning</option>
+            <option value="check_failed">Check failed</option>
+          </select>
+        </div>
+      </form>
+      <p id="check-status" role="status" hidden></p>
+      <details id="result" hidden>
+        <summary>Response JSON</summary>
+        <pre><code id="response"></code></pre>
+      </details>
+      <div id="monitoring" hidden>
+        <section class="docs" aria-labelledby="domain-title">
+          <h2 id="domain-title">Domain lists</h2>
+          <p id="domain-summary"></p>
+          <form id="domains-form">
+            <label for="domains">Manual list, one domain per line</label>
+            <textarea id="domains" rows="4" maxlength="128000" spellcheck="false"></textarea>
+            <div class="actions">
+              <button type="submit">Save manual list</button>
+              <button id="export" class="secondary" type="button">Download CSV</button>
+            </div>
+          </form>
+          <p class="note" id="domains-status" role="status"></p>
+          <p class="note"><a href="/tracker-sync.mjs" download>Download Binom and Keitaro sync script</a></p>
+        </section>
+
+        <section class="docs" aria-labelledby="schedule-title">
+          <h2 id="schedule-title">Schedule</h2>
+          <form id="schedule-form">
+            <label class="check-label"><input id="schedule-enabled" type="checkbox"> Enable scheduled checks</label>
+            <label for="interval">Minutes between checks for each domain</label>
+            <div class="field-row">
+              <input id="interval" class="interval-input" type="number" min="1" max="1440" step="1" value="15" required>
+              <button type="submit">Save schedule</button>
+            </div>
+          </form>
+          <p class="note">Each completed live scheduled check would use one credit. Demo schedule settings are local only; no background checks run here.</p>
+          <p class="note" id="schedule-status" role="status"></p>
+        </section>
+
+        <section class="docs" aria-labelledby="alerts-title">
+          <h2 id="alerts-title">Alerts</h2>
+          <p>Send a message when a monitored domain moves into warning.</p>
+          <form id="alerts-form">
+            <label for="telegram">Telegram chat ID</label>
+            <input id="telegram" class="setting-input" type="text" maxlength="21" inputmode="text" autocomplete="off" spellcheck="false">
+            <label for="discord">Discord webhook URL</label>
+            <input id="discord" class="setting-input" type="password" maxlength="230" autocomplete="off" spellcheck="false">
+            <div class="actions">
+              <button id="save-alerts" type="submit">Save alerts</button>
+              <button id="remove-discord" class="secondary" type="button" hidden>Remove Discord webhook</button>
+            </div>
+          </form>
+          <p class="note" id="alerts-status" role="status"></p>
+        </section>
+      </div>
+    </section>
+
+    <section class="docs" id="api" aria-labelledby="docs-title">
+      <h2 id="docs-title">API docs</h2>
+      <p><code>POST /v1/check</code> is intended to check one URL from a single region only. The live endpoint is not active in this preview.</p>
+      <pre><code>curl https://gsb-api.lol/v1/check \
+  -H "Authorization: Bearer $GSB_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: check-001" \
+  -d '{"url":"https://example.com/"}'</code></pre>
+      <p><code>GET /v1/usage</code> returns your balance and the number of checks billed.</p>
+      <ul>
+        <li><code>warning</code> — Chrome showed a Safe Browsing warning in the single configured region.</li>
+        <li><code>no_warning_observed</code> — The one configured region completed the check without a warning.</li>
+        <li><code>check_failed</code> — HTTP 503. The check was inconclusive and costs $0.</li>
+      </ul>
+      <p class="note">Use the same idempotency key when retrying a request after a network interruption.</p>
+      <details>
+        <summary>Tracker sync</summary>
+        <p>Sync domains from Binom or Keitaro with the <a href="/tracker-sync.mjs" download>tracker sync script</a>. Schedule it on the tracker host to refresh its list automatically. Use <code>GET /v1/domains.csv</code> to export all monitored domains.</p>
+      </details>
+      <section class="docs" aria-labelledby="mcp-agents">
+        <h3 id="mcp-agents">MCP Agents</h3>
+        <p><strong>Preview status:</strong> this route is reserved but not active until the gateway is deployed.</p>
+        <p>When live, connect to <code>https://gsb-api.lol/mcp</code> over Streamable HTTP. Send your account key in the <code>Authorization: Bearer YOUR_API_KEY</code> header.</p>
+        <ul>
+          <li><strong>Claude Code.</strong> Add an HTTP MCP server with the URL and authorization header.</li>
+          <li><strong>GPT.</strong> Set <code>server_url</code> and <code>headers</code> on the <code>mcp</code> tool in the OpenAI Responses API.</li>
+          <li><strong>Hermes.</strong> Set <code>url</code>, <code>headers</code>, and <code>skip_preflight: true</code> under <code>mcp_servers</code>.</li>
+        </ul>
+        <p>Use <code>get_schedule</code> and <code>set_schedule</code> to read or update a check schedule. Use <code>list_domains</code> to see all monitored domains and <code>replace_manual_domains</code> to update the manual list.</p>
+      </section>
+    </section>
+  </main>
+  <footer class="wrap site-footer"><span>Preview only · live scans, signup, billing and MCP are not active.</span><button class="vm-privacy" type="button" data-vm-preferences>Privacy choices</button></footer>
+  <aside class="vm-consent" data-vm-consent hidden role="region" aria-labelledby="vm-consent-title" aria-describedby="vm-consent-copy">
+    <div class="vm-consent-copy"><strong id="vm-consent-title">Analytics preferences</strong><p id="vm-consent-copy">Allow VibeMetrics to measure page views, referrer/UTM source and page engagement. It respects Do Not Track. Choose Accept or Decline; you can change this later.</p></div>
+    <div class="vm-consent-actions"><button type="button" data-vm-decline>Decline</button><button type="button" data-vm-accept>Accept analytics</button></div>
+  </aside>
+  <script src="/consent.js" defer></script>
+<script defer src="https://vibemetrics.click/tracker.js" data-site-id="gsb-api-lol" data-site-key="4x2o7P07lM3F9VxJ54LOstnJhL8wkKD6pwS2kFKtc3I"></script>
+</body>
+</html>
